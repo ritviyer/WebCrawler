@@ -1,6 +1,6 @@
 *pycache*/**
-build/**
-dist/**
+build/
+dist/
 *.txt
 *.spec
 *.exe
