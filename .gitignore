@@ -1,6 +1,6 @@
-*pycache*/
+*pycache*/**
 build/
 dist/
-About.txt
+*.txt
 *.spec
 *.exe
