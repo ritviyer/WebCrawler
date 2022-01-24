@@ -1,6 +1,3 @@
-#Reference - https://dev.to/fprime/how-to-create-a-web-crawler-from-scratch-in-python-2p46
-# https://www.analyticsvidhya.com/blog/2020/11/words-that-matter-a-simple-guide-to-keyword-extraction-in-python/
-
 from fileinput import filename
 import requests
 import re    
@@ -26,6 +23,7 @@ class Crawler(object):
         self.lastTime = time.time() 
         self.timeCalculate = 50
         self.timeKeeper = list()
+        self.domain = urlparse(self.starting_url).hostname
 
     def get_html(self, url):    
         try:    
@@ -66,7 +64,7 @@ class Crawler(object):
         return title, dict(meta)    
 
     def crawl(self, url):
-        if not re.search('(.*goal\..*)|(.*bit..*)',url):
+        if not re.search('(.*'+self.domain+'.*)|(.*bit..*)',url):
             self.ignored.add(url)
             return
         if(len(self.crawled)%self.timeCalculate == 0 and len(self.crawled) > 0):
@@ -89,7 +87,7 @@ class Crawler(object):
 
     def start(self):    
         os.makedirs(self.dataPath, exist_ok=True) 
-        os.makedirs(self.filePath, exist_ok=True) 
+        os.makedirs(self.filePath, exist_ok=True)
         self.crawl(self.starting_url)  
 
     def end(self):

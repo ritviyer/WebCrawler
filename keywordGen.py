@@ -1,11 +1,12 @@
 
 import keywordExtraction as KE
 import pandas as pd
-import main
 import time
 
-dataPath = main.dataPath
-
+dataPath = 'data/'
+print()
+print("The keyword extraction process has started.")
+print()
 start = time.time()
 
 df = pd.read_csv(dataPath + 'fileSummary.csv')
@@ -24,7 +25,11 @@ df['Extracted Keywords'] = topWords
 df.to_csv(dataPath + 'fileSummary_updated.csv', index = False) 
 
 end = time.time()
-print(end-start)
+print("Time taken to extract keywords : ")
+print(str(end-start) + " seconds")
+print()
+input("Press enter key to Exit")
+
 # Run Times
 # 14.278074026107788
 # 19.56166100502014

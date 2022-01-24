@@ -1,5 +1,4 @@
 from fileinput import filename
-import requests
 from bs4 import BeautifulSoup
 import re    
 import string
@@ -37,6 +36,7 @@ def ExtractKeyWord(df):
 
 def Get_Similar_Articles(q, df, df_full, vectorizer):
     print("query:", q)
+    print()
     q = [q]
     q_vec = vectorizer.transform(q).toarray().reshape(df.shape[0],)
     sim = {}
@@ -50,9 +50,9 @@ def Get_Similar_Articles(q, df, df_full, vectorizer):
     for k, v in sim_sorted:
         if v != 0.0:
             print("Similarity Index:", v)
-            print(df_full['Title'][k])
-            print(df_full['URL'][k])
-            print(df_full['Description'][k])
+            print("Title - " + df_full['Title'][k])
+            print("URL - " + df_full['URL'][k])
+            print("Description - " + df_full['Description'][k])
             print()
             print()
             topR-=1

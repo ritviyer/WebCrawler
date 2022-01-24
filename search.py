@@ -1,23 +1,31 @@
 import keywordExtraction as KE
 import pandas as pd
-import main
 import time
 
-dataPath = main.dataPath
+dataPath = 'data/'
 
-start = time.time()
+while True:
+    print()
+    query = input("Enter your query : ")
+    print()
 
-df = pd.read_csv(dataPath + 'fileSummary_updated.csv')
-vectorizer, df_mat = KE.ExtractKeyWord(df)
-KE.Get_Similar_Articles('super league clubs', df_mat, df, vectorizer)
-KE.Get_Similar_Articles('league clubs', df_mat, df, vectorizer)
-KE.Get_Similar_Articles('Ronaldo', df_mat, df, vectorizer)
-KE.Get_Similar_Articles('Latest News', df_mat, df, vectorizer)
-KE.Get_Similar_Articles('Arsenal', df_mat, df, vectorizer)
+    start = time.time()
+    df = pd.read_csv(dataPath + 'fileSummary_updated.csv')
+    vectorizer, df_mat = KE.ExtractKeyWord(df)
+    KE.Get_Similar_Articles(str(query), df_mat, df, vectorizer)
 
 
-end = time.time()
-print(end-start)
+    end = time.time()
+    print("Query Execution time : ")
+    print(str(end-start) + " seconds")
+    print()
+
+    check = input("Enter '1' to exit. Press enter to search again : ")
+    if str(check) == '1':
+        break
+
+print()
+input("Press enter key to Exit")
 
 # Run Times
 # 1 Search
