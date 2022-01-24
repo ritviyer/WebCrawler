@@ -1,0 +1,5 @@
+Total URL's Extracted - 26623
+Unique URL's Extracted - 6236
+Total URL's Ignored - 104
+Total URL's Failed - 0
+Total URL's Crawled - 1101

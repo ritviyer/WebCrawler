@@ -1,46 +1,31 @@
 #Reference - https://dev.to/fprime/how-to-create-a-web-crawler-from-scratch-in-python-2p46
-
+# https://www.analyticsvidhya.com/blog/2020/11/words-that-matter-a-simple-guide-to-keyword-extraction-in-python/
 
 from fileinput import filename
 import requests
-from bs4 import BeautifulSoup
 import re    
 from urllib.parse import urlparse  
 import os
-
-# For each link, we retrieve paragraphs from it, combine each paragraph as one string, and save it to documents (Fig. 2)
-def CombineContent(link):
-    documents = []
-    for i in link:
-        # Make a request to the link
-        r = requests.get(i)
-    
-        # Initialize BeautifulSoup object to parse the content 
-        soup = BeautifulSoup(r.content, 'html.parser')
-    
-        # Retrieve all paragraphs and combine it as one
-        sen = []
-        for i in soup.find('div', {'class':'read__content'}).find_all('p'):
-            sen.append(i.text)
-    
-        # Add the combined paragraphs to documents
-        documents.append(' '.join(sen))
-    return documents
-
-
+from bs4 import BeautifulSoup
+import time
 
 class Crawler(object):    
     def __init__(self, starting_url, dataPath):    
         self.starting_url = starting_url   
         self.dataPath = dataPath
         self.filePath = dataPath + 'files/'
+        self.extracted = list()
         self.ignored = set()
         self.failed = set()
         self.crawled = set()
         self.content = list()
-        self.maxLinks = 10
-        self.fileNum = 0    
         self.nameMapping = dict()
+        self.maxLinks = 1100
+        self.fileNum = 0   
+        self.startTime = time.time()
+        self.lastTime = time.time() 
+        self.timeCalculate = 50
+        self.timeKeeper = list()
 
     def get_html(self, url):    
         try:    
@@ -64,22 +49,36 @@ class Crawler(object):
         for i, link in enumerate(links):    
             if not urlparse(link).netloc:    
                 link_with_base = base + link    
-                links[i] = link_with_base    
+                links[i] = link_with_base   
+                self.extracted.append(links[i]) 
 
         return set(filter(lambda x: 'mailto' not in x, links))    
 
     def extract_info(self, url):    
         html = self.get_html(url)
+        soup = BeautifulSoup(html, 'html.parser')
         meta = re.findall("<meta .*?name=[\"'](.*?)['\"].*?content=[\"'](.*?)['\"].*?>", html)    
-        return dict(meta)    
+        title = ""
+        if not soup.title is None:
+            title = soup.title.string
+        else:
+            title = " "
+        return title, dict(meta)    
 
     def crawl(self, url):
         if not re.search('(.*goal\..*)|(.*bit..*)',url):
             self.ignored.add(url)
             return
+        if(len(self.crawled)%self.timeCalculate == 0 and len(self.crawled) > 0):
+            currTime = time.time()
+            self.timeKeeper.append([len(self.crawled), currTime - self.lastTime , currTime - self.startTime])
+            self.lastTime = currTime
+
+        title,info = self.extract_info(url)
+        if url in self.failed:
+            return
         self.crawled.add(url)
-        info = self.extract_info(url)
-        self.content.append([self.nameMapping[url],url,info.get('description'),info.get('keywords')])
+        self.content.append([self.nameMapping[url],url,title,info.get('description'),info.get('keywords')])
         for link in self.get_links(url):    
             if link in self.crawled:    
                 continue        
@@ -91,4 +90,15 @@ class Crawler(object):
     def start(self):    
         os.makedirs(self.dataPath, exist_ok=True) 
         os.makedirs(self.filePath, exist_ok=True) 
-        self.crawl(self.starting_url)    
+        self.crawl(self.starting_url)  
+
+    def end(self):
+        currTime = time.time()
+        self.timeKeeper.append([len(self.crawled), currTime - self.lastTime , currTime - self.startTime])
+        self.lastTime = currTime
+        with open(self.dataPath + 'stats.txt', 'w', encoding="utf-8") as file:
+            file.write("Total URL's Extracted - " + str(len(self.extracted)) + '\n')
+            file.write("Unique URL's Extracted - " + str(len(set(self.extracted))) + '\n')
+            file.write("Total URL's Ignored - " + str(len(self.ignored)) + '\n')
+            file.write("Total URL's Failed - " + str(len(self.failed)) + '\n')
+            file.write("Total URL's Crawled - " + str(len(self.crawled)) + '\n')

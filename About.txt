@@ -1,0 +1,10 @@
+Limitations
+- Single thread slow
+- not crawling all file types
+- not a complete search ingine
+- Storage is not optimal
+
+
+Good
+- keyword searching after crawling on the cached data so faster
+- Extract keyword for all docs together making it faster

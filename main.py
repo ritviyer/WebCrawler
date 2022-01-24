@@ -4,14 +4,12 @@ import CrawlingFunctions as CF
 import pandas as pd
 
 dataPath = 'data/'
-seedURL = "https://www.goal.com/en-us/news/rashford-man-utd-top-four-rangnick-gamble-west-ham/bltcd66097e1b4403b6"   
-crawler = CF.Crawler(seedURL, dataPath)     
-crawler.start()
+seedURL = "https://www.goal.com/"   
 
-df = pd.DataFrame(crawler.content, columns=['FilePath','URL','Description','Keywords'])
-df.to_csv(dataPath + 'fileSummary.csv', index=False) 
-
-
-#documents = CF.CombineContent(links)
-
-#print(len(documents))
+# crawler = CF.Crawler(seedURL, dataPath)     
+# crawler.start()
+# crawler.end()
+# df = pd.DataFrame(crawler.content, columns=['FilePath','URL','Title','Description','Keywords'])
+# df.to_csv(dataPath + 'fileSummary.csv', index=False) 
+# df = pd.DataFrame(crawler.timeKeeper, columns=['Pages Crawled','Time Since last', 'Total Time'])
+# df.to_csv(dataPath + 'timeStats.csv', index=False) 
